@@ -139,6 +139,21 @@ In case of multiple entity with same name, there will be dependency edges to all
 ![Dependency Graph]({{site.baseurl}}/images/ctwik/entity_deps_graph.png "Dependency Graph")
 
 
+This is a part of sample dependency graph for above example `file1.cpp`, assuming class `S` and struct `R` are coming from `<stdio.h>`. Note that this diagram only covers  relevant nodes. There will be a lot more nodes/entities in this graph, coming from `<stdio.h>`.
+
+### Minimal Set of Functions
+
+- By computing this entity dependency graph for a translation unit, before and after code change, CTwik figure out the changed nodes of this graph. This can be done by computing checksum of content, for each node, and running diff calculator algorithm on list of entities.
+- Let **set A** = collection of changed nodes or newly added nodes in this dependency graph.
+- Let **set B** = inverse dependency cover of set A. This include all the entities, which were dependent on any of the entity of set A. The set B could include function definitions. Hence we need to recompile them all because some of their dependency (A) is changed.
+- Let **set C** = dependency cover of B.. We need to include whatever is required to compile functions in set B. For example, we might need a struct/class layout for a function to compile, we might need function declaration. etc.
+- The set C will contain the minimal and sufficient entities to cover the required functions and dependency entities, required to recompile those functions.
+- The last step is to dump the entities from set C to a file `minimal_change.cpp` in topologically sorted order, and compile the minimal_change.cpp file, to produce the shared library `minimal_change.so`.
+
+
+![Dependency Graph With Impacted Entities]({{site.baseurl}}/images/ctwik/entity_deps_graph_with_changed_sets.png "Dependency Graph With Impacted Entities")
+
+
 
 
 
