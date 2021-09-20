@@ -67,7 +67,7 @@ Hot Patching is hard in C++, because once the App starts, there is only machine 
 - [Beta Implementation] For global data symbols, we change their entry in global offset table, so that old functions (including the unpatched), will be referring to their new value from shared library. To support this, entire application code needs to be compiled with '-fPIC' option.
 
 ```C++
-int F(int x);
+int F44(int x);
 ```
 
 ### CTwik-Client Implementation Details
