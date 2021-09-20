@@ -133,6 +133,13 @@ CTwik parse a translation unit (after preprocessing) into graph of global entiti
 - Entity name is the fully qualified name of an entity w.r.t. namespace.
 
 
+{% highlight ruby %}
+def print_hi(name)
+  puts "Hi, #{name}"
+end
+print_hi('Tom')
+#=> prints 'Hi, Tom' to STDOUT.
+{% endhighlight %}
 
 
 ToDo: Add more content here from https://mohit-saini-blog.blogspot.com/2021/09/ctwik-general-purpose-hot-patcher-for-cpp.html
