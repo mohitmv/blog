@@ -287,8 +287,6 @@ int F4() {
 {% endhighlight %}
 
 </td>
-</tr>
-<tr>
 
 <td markdown="1">
 
@@ -298,14 +296,6 @@ int F4() {
 {% endhighlight %}
 
 </td>
-<td markdown="1" style='vertical-align:top' >
-
-{% highlight c++ %}
-// file4.cpp
-....
-{% endhighlight %}
-</td>
-
 
 </tr>
 </table>
