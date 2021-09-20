@@ -70,7 +70,7 @@ Hot Patching is hard in C++, because once the App starts, there is only machine 
 
 Let's understand the 'extracting minimal set of function' piece with an example. Consider a translation unit (TU) 'file1.cpp' containing following code.
 
-```c++
+{% highlight c++ %}
 // file1.cpp
 
 #include <stdio.h>
@@ -93,14 +93,14 @@ int F2(int x) {
   return F(x) + 2;
 }
 // 100 more functions...
-```
+{% endhighlight %}
 
 
 - In this translation unit, if some code is changed in function F (let's say 50 is replaced by 51), we have to recompile F and F2.  The reason why F2 needs to be recompiled, is, F2 can access the implementation of F, and hence F's definition could be inlined in F2, and the machine code of F2 might not be calling F.
 
 - To compile F and F2, we need 'printf' declaration as well. Hence, the minimal set of code that needs to be recompiled, would be 'minimal_change.cpp'.
 
-```c++
+{% highlight c++ %}
 // minimal_change.cpp
 
 extern "C" int printf(const char *format, ...);
@@ -114,7 +114,7 @@ int F(int x) {
 int F2(int x) {
   return F(x) + 2;
 }
-```
+{% endhighlight %}
 
 - In this particular example, it can be observed that recompiling the file1.cpp after changing  50 to 51, will produce the exact same machine code, except for the function 'F' and 'F2'. Hence 'F' and 'F2' are the minimal and sufficient set of functions which needs to be recompiled, and hot patching the new definition of 'F' and 'F2' will make the live C++ process behave equivalent to how it would behave if we could have rebuild the main executable again and restart the process.
 
