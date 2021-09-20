@@ -6,12 +6,23 @@ permalink: /about/
 
 ### About Me
 
-Hi, I'm Mohit Saini.
+Hi, I'm Mohit Saini. I've worked on Embedded Systems, OS kernels, thread
+scheduling algorithms, micro controller with RISC-V architecture, Performance optimization at the level of nano seconds, C compiler for custom hardware targets, Build performance optimization.
 
-ToDo(Mohit): Add more details here.
+I've been writing C++ code for 8+ years now. More than writing, I'm obsessed
+with deleting code. In my life, I have deleted 2x amount of C++ code
+than what I have written overall.
+
+#### I do a lot of open source. Some of my best open source work are:
 
 
-### Contact me
+1. [CTwik](https://mohitmv.github.io/blog/CTwik-General-Purpose-Hot-Patcher-For-Cpp) - General Purpose Hot Patcher in a C++ process
+2. [AParse](https://github.com/mohitmv/aparse) - General purpose parser generator (More powerful than Antlr/Bison)
+3. [Quick](https://github.com/mohitmv/quick) - Collection of highly usable C++ libraries
+4. [lazy_map](https://github.com/mohitmv/lazy_map) - std::unordered_map like interface but O(1) cost of copying
+
+
+#### Contact me
 
 [LinkedIn](https://www.linkedin.com/in/mohit-saini-v2/)
 
