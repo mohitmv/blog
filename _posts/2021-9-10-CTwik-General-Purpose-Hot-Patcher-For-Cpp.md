@@ -284,6 +284,9 @@ int F(int);
 int F4() {
   return F(10) + 2;
 }
+
+...
+
 {% endhighlight %}
 
 </td>
@@ -292,7 +295,10 @@ int F4() {
 
 {% highlight c++ %}
 // file3.cpp
+
 ...
+...
+
 {% endhighlight %}
 
 </td>
