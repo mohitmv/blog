@@ -258,22 +258,57 @@ Let's consider an example, where function "F" is changed. Source code for main e
 <table style='border: solid #ccc 0px; vertical-align: top;'><tr>
 <td markdown="1">
 
-```c++
+{% highlight c++ %}
+// file1.cpp
 #include <stdio.h>
-void P( ) {
-  ... 
+
+int F(int x) {
+  x += 50;
+  printf("x = %d\n", x);
+  return x;
 }
-...
-```
+
+void P( ) {
+  ...
+}
+{% endhighlight %}
 
 </td>
 <td markdown="1" style='vertical-align:top' >
 
-```c++
-extern "C" int printf(const char *format, ...);
-```
+{% highlight c++ %}
+// file2.cpp
+
+int F(int);
+
+int F4() {
+  return F(10) + 2;
+}
+{% endhighlight %}
+
 </td>
-</tr></table>
+</tr>
+<tr>
+
+<td markdown="1">
+
+{% highlight c++ %}
+// file3.cpp
+...
+{% endhighlight %}
+
+</td>
+<td markdown="1" style='vertical-align:top' >
+
+{% highlight c++ %}
+// file4.cpp
+....
+{% endhighlight %}
+</td>
+
+
+</tr>
+</table>
 
 
 
