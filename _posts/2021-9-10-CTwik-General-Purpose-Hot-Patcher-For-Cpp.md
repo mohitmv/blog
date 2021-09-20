@@ -133,7 +133,7 @@ CTwik parse a translation unit (after preprocessing) into graph of global entiti
 - Entity name is the fully qualified name of an entity w.r.t. namespace.
 
 
-{% highlight ruby %}
+{% highlight c++ %}
 def print_hi(name)
   puts "Hi, #{name}"
 end
