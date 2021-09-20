@@ -154,6 +154,48 @@ This is a part of sample dependency graph for above example `file1.cpp`, assumin
 ![Dependency Graph With Impacted Entities]({{site.baseurl}}/images/ctwik/entity_deps_graph_with_changed_sets.png "Dependency Graph With Impacted Entities")
 
 
+#### Note that:
+
+- Deps Cover (Dependency Cover) of set X is the transitive closure of dependency relationship. Formally,
+  - DepsCover(X) = Union of DepsCover(x) for each node x in set X..
+  - DepsCover(x) = {x} + Union of DepsCover(y) for each y in direct dependencies of x. 
+- Similarly, Inverse Deps Cover (Inverse Dependency cover) of set X is transitive closure of inverse-dependency relationship. Inverse dependencies of node x, is set of nodes/entities which depend on x.
+
+
+### Changing a header file (eg: `file1.hpp` )
+
+The algorithm described above, to extract the minimal set of entities to recompile, is applicable only for code change in one `cpp` file, which is preprocessed to make only one translation unit. However if the header file is changed, N number of cpp files (translation units) could be impacted. To handle the change, CTwik computes minimal set of functions to recompile, for each of the impacted translation unit. Each of the  `minimal_change_1.cpp`, `minimal_change_2.cpp`, ... etc. file is compiled to `.o` object files individually and then linked together to produce shared library `minimal_change.so`.
+
+
+#### Note that:
+
+- CTwik client maintains the file dependency graph as well, to enable efficient computation of impacted translation units, when a header file is changed.
+- CTwik client keeps the entity dependency graph in cache, when a translation unit  is changed for the first time.
+- The entity dependency graph also includes the original file where the entity has been declared/defined. (Entities in a TU could be coming from many headers). This allows CTwik to efficiently extract the impacted entities across large number of translation units, when a entity is changed in very base level header file, which is `#include`'d in a large number of TUs (directly or indirectly) but only few of TUs  are really using the changed entity from that header. This is a big optimization when the code from very base level header is changed.
+
+
+### Invalid code change
+
+What happens when, there is a.hpp file, containing `int F(int x);` declaration, and `a.cpp` file, containing it's definition. Another file `b.cpp` is using `#include "a.hpp"` , and calling `F(int x)` inside function "F3". Now if `F(int x)` is changed to `F(int x, int y)` in a.hpp as well as a.cpp but not in `b.cpp`. What will happen ?
+
+
+- Entity "F" is changed in hpp, hence the functions where "F" was being used in `b.cpp` will be extracted out for recompiling. Which will fail to compile, as expected. Hence invalid code change will fail at the CTwik client only. This  prevents the risk of invalid code corrupting the running C++ process, when it's dynamically patched.
+- Note that, if `int F(int x);` is changed to `void F(int x);` in `a.hpp` and `a.cpp` but not in `b.cpp`, and if we patch only the new definition of "F", without patching "F3", then execution of "F3" function can crash at runtime.
+- But since CTwik-client correctly report the compilation errors, there is no risk of invalid change being patched in running C++ process.
+
+
+### As per the algorithm above:
+
+1.  what happens when a new member is added in a class S:
+- All the functions referring to that class S, across all translation units needs to be extracted out in `minimal_change.cpp` file. All the global variables referring to S needs to be recompiled. This include global variables of type S, as well as those using S in initialisation value.
+
+
+
+
+
+
+
+
 
 
 
