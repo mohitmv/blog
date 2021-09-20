@@ -352,7 +352,10 @@ int F(int x) {
 - As we are overwriting first 12 bytes of old function "F" to long jump, we are not touching the return-address register, hence, when new "F" returns, code flow will directly go to caller of old "F", which is "F4" in this example. This is similar to tail call optimization.
 - We need long jump because the absolute value of function pointer in shared library could be 64 bit long. In x86-64, long jump require 12 bytes - `moveabs %rax 0x401190 ; jmp %rax`.
 - Note that code section of an address space is not writable by default. We need to make it writable, explicitly using 'mprotect' as follows:
+{% highlight c++ %}
 mprotect(page_start_ptr, page_size, PROT_READ | PROT_WRITE | PROT_EXEC);
+{% endhighlight %}
+
 
 ### Changing the machine code
 
