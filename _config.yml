@@ -67,6 +67,7 @@ kramdown:
   # Jekyll 3 and GitHub Pages now only support rouge for syntax highlighting
   syntax_highlighter: rouge
   syntax_highlighter_opts:
+    fenced_code_blocks: true
     # Use existing pygments syntax highlighting css
     css_class: 'highlight'
 

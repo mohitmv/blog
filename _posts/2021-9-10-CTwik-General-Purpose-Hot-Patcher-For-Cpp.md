@@ -66,12 +66,15 @@ Hot Patching is hard in C++, because once the App starts, there is only machine 
 (moveabs %rax 0xVV ; jmp %rax). Here '0xVV' is the 64 bit new value of function ptr.
 - [Beta Implementation] For global data symbols, we change their entry in global offset table, so that old functions (including the unpatched), will be referring to their new value from shared library. To support this, entire application code needs to be compiled with '-fPIC' option.
 
+```C++
+int F(int x);
+```
 
 ### CTwik-Client Implementation Details
 
 Let's understand the 'extracting minimal set of function' piece with an example. Consider a translation unit (TU) 'file1.cpp' containing following code.
 
-```C++
+{% highlight c++ %}
 // file1.cpp
 
 #include <stdio.h>
@@ -96,7 +99,8 @@ int F2(int x) {
 
 // 100 more functions.
 ...
-```
+{% endhighlight %}
+
 
 - In this translation unit, if some code is changed in function F (let's say 50 is replaced by 51), we have to recompile F and F2.  The reason why F2 needs to be recompiled, is, F2 can access the implementation of F, and hence F's definition could be inlined in F2, and the machine code of F2 might not be calling F.
 
