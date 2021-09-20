@@ -131,5 +131,16 @@ CTwik parse a translation unit (after preprocessing) into graph of global entiti
 - Entity name is the fully qualified name of an entity w.r.t. namespace.
 
 
+### Dependency Edge
+
+In the entity graph, there is an dependency edge from entity B to entity A, if entity B refer the name of entity A and entity A is defined/declared before entity B.
+In case of multiple entity with same name, there will be dependency edges to all such entities.
+
+![Dependency Graph](images/ctwik/entity_deps_graph.png "Dependency Graph")
+
+
+
+
+
 ToDo: Add more content here from https://mohit-saini-blog.blogspot.com/2021/09/ctwik-general-purpose-hot-patcher-for-cpp.html
 
