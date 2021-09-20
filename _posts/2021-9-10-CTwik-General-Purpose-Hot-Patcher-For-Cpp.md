@@ -17,7 +17,7 @@ CTwik can take care of almost any kind of code change, including the change in h
 
 CTwik typically takes a few seconds for end to end patching, after the code change is saved in text-editor.
 
-<iframe style='border:none; width:500px; height: 300px;' src="http://www.youtube.com/embed/e7wm8pw2Yw0" >&nbsp;</iframe>
+<iframe style='border:none; width:500px; height: 300px;' src="https://www.youtube.com/embed/e7wm8pw2Yw0" >&nbsp;</iframe>
 
 
 
