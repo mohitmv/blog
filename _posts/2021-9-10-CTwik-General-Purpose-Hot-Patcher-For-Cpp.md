@@ -136,7 +136,7 @@ CTwik parse a translation unit (after preprocessing) into graph of global entiti
 In the entity graph, there is an dependency edge from entity B to entity A, if entity B refer the name of entity A and entity A is defined/declared before entity B.
 In case of multiple entity with same name, there will be dependency edges to all such entities.
 
-![Dependency Graph](images/ctwik/entity_deps_graph.png "Dependency Graph")
+![Dependency Graph]({{site.baseurl}}/images/ctwik/entity_deps_graph.png "Dependency Graph")
 
 
 
