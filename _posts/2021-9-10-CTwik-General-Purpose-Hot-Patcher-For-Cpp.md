@@ -17,7 +17,7 @@ CTwik can take care of almost any kind of code change, including the change in h
 
 CTwik typically takes a few seconds for end to end patching, after the code change is saved in text-editor.
 
-<iframe style='border:none; width:500px; height: 300px;' src="http://www.youtube.com/embed/e7wm8pw2Yw0" ></iframe>
+<iframe style='border:none; width:500px; height: 300px;' src="http://www.youtube.com/embed/e7wm8pw2Yw0" >&nbsp;</iframe>
 
 
 
@@ -69,10 +69,7 @@ Hot Patching is hard in C++, because once the App starts, there is only machine 
 
 ### CTwik-Client Implementation Details
 
-Let's understand the 'extracting minimal set of function' piece with an example. Consider a translation unit (TU) 'file1.cpp' containing following code (left side).
-
-<table style='border: solid #ccc 0px; vertical-align: top;' ><tr>
-<td>
+Let's understand the 'extracting minimal set of function' piece with an example. Consider a translation unit (TU) 'file1.cpp' containing following code.
 
 ```C++
 // file1.cpp
@@ -101,8 +98,9 @@ int F2(int x) {
 ...
 ```
 
-</td>
-<td style='vertical-align:top' >
+- In this translation unit, if some code is changed in function F (let's say 50 is replaced by 51), we have to recompile F and F2.  The reason why F2 needs to be recompiled, is, F2 can access the implementation of F, and hence F's definition could be inlined in F2, and the machine code of F2 might not be calling F.
+
+- To compile F and F2, we need 'printf' declaration as well. Hence, the minimal set of code that needs to be recompiled, would be 'minimal_change.cpp'.
 
 ```C++
 // minimal_change.cpp
@@ -119,14 +117,6 @@ int F2(int x) {
   return F(x) + 2;
 }
 ```
-</td>
-</tr></table>
-
-
-
-- In this translation unit, if some code is changed in function F (let's say 50 is replaced by 51), we have to recompile F and F2.  The reason why F2 needs to be recompiled, is, F2 can access the implementation of F, and hence F's definition could be inlined in F2, and the machine code of F2 might not be calling F.
-
-- To compile F and F2, we need 'printf' declaration as well. Hence, the minimal set of code that needs to be recompiled, would be 'minimal_change.cpp' (right side in above table).
 
 - In this particular example, it can be observed that recompiling the file1.cpp after changing  50 to 51, will produce the exact same machine code, except for the function 'F' and 'F2'. Hence 'F' and 'F2' are the minimal and sufficient set of functions which needs to be recompiled, and hot patching the new definition of 'F' and 'F2' will make the live C++ process behave equivalent to how it would behave if we could have rebuild the main executable again and restart the process.
 
