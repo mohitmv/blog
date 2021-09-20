@@ -311,9 +311,6 @@ int F4() {
 
 #### After the change:
 
-<table style='border: solid #ccc 0px; vertical-align: top;'><tr>
-<td markdown="1">
-
 {% highlight c++ %}
 // Changed file1.cpp (50 is replaced by 51)
 
@@ -329,9 +326,6 @@ void P( ) {
 }
 {% endhighlight %}
 
-</td>
-<td markdown="1" style='vertical-align:top' >
-
 {% highlight c++ %}
 // Extracted minimal_change.cpp
 
@@ -344,10 +338,6 @@ int F(int x) {
 }
 
 {% endhighlight %}
-
-</td>
-</tr>
-</table>
 
 
 #### Hot Patching:
@@ -409,7 +399,21 @@ int F(int x) {
 
 ### How to find old and new function pointers
 
+- CTwik read the symbol table of main executable and patched shared library to get the list of all function pointers and their symbols. Note that "function pointer" is the memory address, where machine code of a function starts.
+- In case of main executable, the value of function pointers present in symbol table are the real virtual memory address, where machine code of those functions starts.
+- However in case of shared library, the value of function pointer, present in symbol table is the relative function pointer. This is because, a shared lib is loaded dynamically at runtime and the absolute value of function pointer would depend on the memory address where shared library is loaded by `dlopen`.
+- In case of shared library, CTwik-client compute the list of function symbols and relative function pointers by reading the shared library, and send this list to the CTwik-server. This is to optimize the compute in the main C++ process, which is already serving other  user facing requests.
+- To compute absolute function pointer for all the symbols in patched shared library, we could use "dlsym" for all symbols, but it can impact the performance. Hence CTwik-server calculate the absolute function pointer of only one of the function-symbol, using "dlsym", and then calculate offset by comparing it's relative function pointer, and then apply this offset for other function pointers. This require only one "dlsym" call. Calling the "dysym" for all the symbols might impact the performance of hot patching.
+- For a shared library, CTwik only considers ".text" section of ELF file, for finding the patched  function pointers and symbols. Other code section of ELF are not considered. This is because, only the ".text" section contains user created functions.
 
+
+### Continuous patching
+
+- The CTwik-client can keep on sending patches one after another. The CTwik server need to handle them well.
+- CTwik server maintains a map(symbol -> list of function ptr), which tracks all function pointers for symbol S. For example, if a function "F" was present in main executable, and then it was later hot patched 3 times, then this map will contain all 4 function pointers in the map for symbol "F".
+- When a function F is hot patched with new definition, CTwik-server redirect all the existing function pointer of F, to the newly patched definition of F.
+- Note that, redirecting the last function ptr to the new function ptr would be sufficient for correctness but it will waste N instructions at runtime when F is called.
+- For each of the opened shared library, CTwik-Server keep track of the symbols which are still active (i.e. the symbols, which are not hot patched in the latest patch request). When there is no active symbol, the CTwik-Server dlclose those shared libraries.
 
 
 
