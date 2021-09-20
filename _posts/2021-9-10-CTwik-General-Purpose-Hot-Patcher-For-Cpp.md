@@ -360,12 +360,14 @@ mprotect(page_start_ptr, page_size, PROT_READ | PROT_WRITE | PROT_EXEC);
 ### Changing the machine code
 
 {% highlight c++ %}
-// Change the machine code of function @fp1, to long jump on function @fp2.
+// Change the machine code of function @fp1, to long jump on
+// function @fp2.
 // It requires following 2 instructions.
 // 1. movabs %rax,0x1234567891234;
 // 2. jmp    %rax;
 // Where 0x1234567891234 is the fp2.
-// See the machine/assembly code of "F" here - https://godbolt.org/z/zKnzjE6x9
+// See the machine/assembly code of "F" here:
+// https://godbolt.org/z/zKnzjE6x9
 bool RuntimeInjector::SetRedirect(long fp1, long fp2) {
   if (not AllowWriteInPage(fp1)) return false;
   auto fp1_b = bit_cast<char*>(fp1);
@@ -483,7 +485,83 @@ bool RuntimeInjector::Inject(const InjectRequest& inject_request) {
 }
 {% endhighlight %}
 
+### Unit Tests
 
+See how output of F is changing at runtime.
+
+{% highlight c++ %}
+// f.cpp
+int F(int x) {
+  return x+10;
+}
+{% endhighlight %}
+
+{% highlight c++ %}
+
+// runtime_inject_test.cpp
+int F(int x);
+TEST(RuntimeInjector, Basic) {
+  InitInjector(argv_gtest[0]);
+  EXPECT_EQ(11, F(1));
+  EXPECT_EQ(13, F(3));
+  ASSERT_TRUE(Inject(Compile(R"(
+    int G() {
+      return 8000;
+    }
+    int F(int x) {
+      return x + 100;
+    }
+  )")));
+  EXPECT_EQ(101, F(1));
+  EXPECT_EQ(103, F(3));
+  ASSERT_TRUE(Inject(Compile(R"(
+    int G();
+    int F(int x) {
+      return x + 1000 + G();
+    }
+  )")));
+  EXPECT_EQ(9001, F(1));
+  EXPECT_EQ(9003, F(3));
+  ASSERT_TRUE(Inject(Compile(R"(
+    int G() {
+      return 10;
+    }
+  )")));
+  EXPECT_EQ(1011, F(1));
+  EXPECT_EQ(1013, F(3));
+  ASSERT_TRUE(Inject(Compile(R"(
+    #include <string>
+    int SumOfDigit(const std::string& s) {
+      int p = 0;
+      for (char c : s) {
+        p += c - '0';
+      }
+      return p;
+    }
+    int F(int x) {
+      return SumOfDigit(std::to_string(x));
+    }
+  )")));
+  EXPECT_EQ(12, F(453));  // sum of digits : 4 + 5 + 3 = 12
+  EXPECT_EQ(10, F(136));
+  EXPECT_EQ(45, F(136873737)); // 1 + 3 + 6 + ... = 45
+  ASSERT_TRUE(Inject(Compile(R"(
+    #include <string>
+    int SumOfDigit(const std::string& s) {
+      // returns sum_of_digit + length of string
+      int p = 0;
+      for (char c : s) {
+        p += c - '0';
+      }
+      return p + s.size();
+    }
+  )")));
+  EXPECT_EQ(15, F(453));
+  EXPECT_EQ(13, F(136));
+  EXPECT_EQ(54, F(136873737));
+}
+
+{% endhighlight %}
 
 
 
