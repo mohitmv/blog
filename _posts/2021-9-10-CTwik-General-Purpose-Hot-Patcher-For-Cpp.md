@@ -66,15 +66,11 @@ Hot Patching is hard in C++, because once the App starts, there is only machine 
 (moveabs %rax 0xVV ; jmp %rax). Here '0xVV' is the 64 bit new value of function ptr.
 - [Beta Implementation] For global data symbols, we change their entry in global offset table, so that old functions (including the unpatched), will be referring to their new value from shared library. To support this, entire application code needs to be compiled with '-fPIC' option.
 
-```c++
-int F24(int x);
-```
-
 ### CTwik-Client Implementation Details
 
 Let's understand the 'extracting minimal set of function' piece with an example. Consider a translation unit (TU) 'file1.cpp' containing following code.
 
-{% highlight c++ %}
+```c++
 // file1.cpp
 
 #include <stdio.h>
@@ -96,17 +92,15 @@ void P( ) {
 int F2(int x) {
   return F(x) + 2;
 }
-
-// 100 more functions.
-...
-{% endhighlight %}
+// 100 more functions...
+```
 
 
 - In this translation unit, if some code is changed in function F (let's say 50 is replaced by 51), we have to recompile F and F2.  The reason why F2 needs to be recompiled, is, F2 can access the implementation of F, and hence F's definition could be inlined in F2, and the machine code of F2 might not be calling F.
 
 - To compile F and F2, we need 'printf' declaration as well. Hence, the minimal set of code that needs to be recompiled, would be 'minimal_change.cpp'.
 
-{% highlight c++ %}
+```c++
 // minimal_change.cpp
 
 extern "C" int printf(const char *format, ...);
@@ -120,8 +114,7 @@ int F(int x) {
 int F2(int x) {
   return F(x) + 2;
 }
-{% endhighlight %}
-
+```
 
 - In this particular example, it can be observed that recompiling the file1.cpp after changing  50 to 51, will produce the exact same machine code, except for the function 'F' and 'F2'. Hence 'F' and 'F2' are the minimal and sufficient set of functions which needs to be recompiled, and hot patching the new definition of 'F' and 'F2' will make the live C++ process behave equivalent to how it would behave if we could have rebuild the main executable again and restart the process.
 
@@ -129,22 +122,13 @@ int F2(int x) {
 ### How to figure out minimal set of functions automatically ?
 
 
-CTwik parse a translation unit (after preprocessing) into graph of global entities. A global C++ entity is a global definition or declaration. An entity could be anything like struct, class, function declaration, function definition, typedef, global variable declaration/definition etc. Each entity declaration / definition introduce a name for it, which can be referred in other entities. For example -  struct S { ...  };    is an entity with name "S".  `int F2(int x) { return F(x) + 2; }` is an entity with name "F2".  Globally defined `int x = 5;` is another entity.
+CTwik parse a translation unit (after preprocessing) into graph of global entities. A global C++ entity is a global definition or declaration. An entity could be anything like struct, class, function declaration, function definition, typedef, global variable declaration/definition etc. Each entity declaration / definition introduce a name for it, which can be referred in other entities. For example -  struct S { ...  };    is an entity with name "S".  ```c++ int F2(int x) { return F(x) + 2; }``` is an entity with name "F2".  Globally defined `int x = 5;` is another entity.
 
 #### Note that:
 
 - we are not considering the entities inside function-scope. The entire body of a function definition is considered as single entity.
 - Each entity has a name. There could be multiple entities with same name (example function overloading etc.)
 - Entity name is the fully qualified name of an entity w.r.t. namespace.
-
-
-{% highlight c++ %}
-def print_hi(name)
-  puts "Hi, #{name}"
-end
-print_hi('Tom')
-#=> prints 'Hi, Tom' to STDOUT.
-{% endhighlight %}
 
 
 ToDo: Add more content here from https://mohit-saini-blog.blogspot.com/2021/09/ctwik-general-purpose-hot-patcher-for-cpp.html
