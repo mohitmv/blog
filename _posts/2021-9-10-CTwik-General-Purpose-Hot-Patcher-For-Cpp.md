@@ -253,7 +253,9 @@ What happens when, there is a.hpp file, containing `int F(int x);` declaration, 
 
 
 CTwik-Server open the shared library using `dlopen` and edit the machine code of current process, to redirect (long jump) the old function definitions, to the new definitions (new function pointer).
-Let's consider an example, where function "F" is changed. Source code for main executable:
+Let's consider an example, where function "F" is changed.
+
+#### Source code for main executable:
 
 <table style='border: solid #ccc 0px; vertical-align: top;'><tr>
 <td markdown="1">
@@ -305,6 +307,108 @@ int F4() {
 
 </tr>
 </table>
+
+
+#### After the change:
+
+<table style='border: solid #ccc 0px; vertical-align: top;'><tr>
+<td markdown="1">
+
+{% highlight c++ %}
+// Changed file1.cpp (50 is replaced by 51)
+
+#include <stdio.h>
+int F(int x) {
+  x += 51;
+  printf("x = %d\n", x);
+  return x;
+}
+
+void P( ) {
+  ...
+}
+{% endhighlight %}
+
+</td>
+<td markdown="1" style='vertical-align:top' >
+
+{% highlight c++ %}
+// Extracted minimal_change.cpp
+
+extern "C" int printf(const char *format, ...);
+
+int F(int x) {
+  x += 51;
+  printf("x = %d\n", x);
+  return x;
+}
+
+{% endhighlight %}
+
+</td>
+</tr>
+</table>
+
+
+#### Hot Patching:
+
+
+![Runtime Redirection]({{site.baseurl}}/images/ctwik/runtime_redirection.png "Runtime Redirection")
+
+
+#### Note:
+
+- In this example above, old function "F" is redirected to new function "F".
+- As we are overwriting first 12 bytes of old function "F" to long jump, we are not touching the return-address register, hence, when new "F" returns, code flow will directly go to caller of old "F", which is "F4" in this example. This is similar to tail call optimization.
+- We need long jump because the absolute value of function pointer in shared library could be 64 bit long. In x86-64, long jump require 12 bytes - `moveabs %rax 0x401190 ; jmp %rax`.
+- Note that code section of an address space is not writable by default. We need to make it writable, explicitly using 'mprotect' as follows:
+mprotect(page_start_ptr, page_size, PROT_READ | PROT_WRITE | PROT_EXEC);
+
+### Changing the machine code
+
+{% highlight c++ %}
+// Change the machine code of function @fp1, to long jump on function @fp2.
+// It requires following 2 instructions.
+// 1. movabs %rax,0x1234567891234;
+// 2. jmp    %rax;
+// Where 0x1234567891234 is the fp2.
+// See the machine/assembly code of "F" here - https://godbolt.org/z/zKnzjE6x9
+bool RuntimeInjector::SetRedirect(long fp1, long fp2) {
+  if (not AllowWriteInPage(fp1)) return false;
+  auto fp1_b = bit_cast<char*>(fp1);
+  Store<char>(0x48, fp1_b);
+  Store<char>(0xb8, fp1_b + 1);
+  Store<long>(fp2, fp1_b + 2);
+  Store<char>(0xff, fp1_b + 10);
+  Store<char>(0xe0, fp1_b + 11);
+  return true;
+}
+{% endhighlight %}
+
+This redirection is similar to how this "F" (left) is compiled to machine code (right).
+https://godbolt.org/z/zKnzjE6x9
+
+<table style='border: solid #ccc 0px; vertical-align: top;'><tr>
+<td markdown="1">
+
+{% highlight c++ %}
+int F(int x) {
+  long p = 0x1234567891234;
+  return bit_cast<int(*)(int)>(p)(x);
+}
+{% endhighlight %}
+
+</td>
+<td markdown="1" style='vertical-align:top' >
+
+![Long Jump Example]({{site.baseurl}}/images/ctwik/long_jump_godbolt_example.png "Long Jump Example")
+
+</td>
+</tr>
+</table>
+
+### How to find old and new function pointers
+
 
 
 
