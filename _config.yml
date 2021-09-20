@@ -9,7 +9,7 @@ name: Mohit Saini
 description: Modern C++ | Embedded Systems | IIT Delhi - CS
 
 # URL of your avatar or profile pic (you could use your GitHub profile pic)
-avatar: https://raw.githubusercontent.com/tinytrashbin/blog/master/images/mohit_saini.jpeg
+avatar: https://raw.githubusercontent.com/mohitmv/blog/master/images/mohit_saini.jpeg
 
 #
 # Flags below are optional
@@ -21,7 +21,7 @@ footer-links:
   email:
   facebook:
   flickr:
-  github: trashbin/blog
+  github: mohitmv
   instagram:
   linkedin: mohit-saini-v2
   pinterest:
@@ -47,7 +47,7 @@ url:
 # (http://yourusername.github.io/repository-name)
 # and NOT your User repository (http://yourusername.github.io)
 # then add in the baseurl here, like this: "/repository-name"
-baseurl: "https://tinytrashbin.github.io/blog"
+baseurl: "https://mohitmv.github.io/blog"
 
 #
 # !! You don't need to change any of the configuration flags below !!
