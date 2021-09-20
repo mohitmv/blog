@@ -416,6 +416,10 @@ int F(int x) {
 - For each of the opened shared library, CTwik-Server keep track of the symbols which are still active (i.e. the symbols, which are not hot patched in the latest patch request). When there is no active symbol, the CTwik-Server dlclose those shared libraries.
 
 
+![Multiple Patches]({{site.baseurl}}/images/ctwik/multiple_patches.png "Multiple Patches")
+
+
+
 
 ToDo: Add more content here from https://mohit-saini-blog.blogspot.com/2021/09/ctwik-general-purpose-hot-patcher-for-cpp.html
 
