@@ -122,7 +122,7 @@ int F2(int x) {
 ### How to figure out minimal set of functions automatically ?
 
 
-CTwik parse a translation unit (after preprocessing) into graph of global entities. A global C++ entity is a global definition or declaration. An entity could be anything like struct, class, function declaration, function definition, typedef, global variable declaration/definition etc. Each entity declaration / definition introduce a name for it, which can be referred in other entities. For example -  struct S { ...  };    is an entity with name "S".  ```c++ int F2(int x) { return F(x) + 2; }``` is an entity with name "F2".  Globally defined `int x = 5;` is another entity.
+CTwik parse a translation unit (after preprocessing) into graph of global entities. A global C++ entity is a global definition or declaration. An entity could be anything like struct, class, function declaration, function definition, typedef, global variable declaration/definition etc. Each entity declaration / definition introduce a name for it, which can be referred in other entities. For example -  struct S { ...  };    is an entity with name "S".  {% highlight c++ %} int F2(int x) { return F(x) + 2; }{% endhighlight %} is an entity with name "F2".  Globally defined `int x = 5;` is another entity.
 
 #### Note that:
 
