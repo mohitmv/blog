@@ -249,7 +249,31 @@ What happens when, there is a.hpp file, containing `int F(int x);` declaration, 
 
 
 
+## CTwik-Server implementation details
 
+
+CTwik-Server open the shared library using `dlopen` and edit the machine code of current process, to redirect (long jump) the old function definitions, to the new definitions (new function pointer).
+Let's consider an example, where function "F" is changed. Source code for main executable:
+
+<table style='border: solid #ccc 0px; vertical-align: top;'><tr>
+<td markdown="1">
+
+```c++
+#include <stdio.h>
+void P( ) {
+  ... 
+}
+...
+```
+
+</td>
+<td markdown="1" style='vertical-align:top' >
+
+```c++
+extern "C" int printf(const char *format, ...);
+```
+</td>
+</tr></table>
 
 
 
