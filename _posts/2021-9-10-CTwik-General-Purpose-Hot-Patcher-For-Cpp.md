@@ -102,7 +102,7 @@ int F2(int x) {
 
 - To compile F and F2, we need 'printf' declaration as well. Hence, the minimal set of code that needs to be recompiled, would be 'minimal_change.cpp'.
 
-```C++
+{% highlight c++ %}
 // minimal_change.cpp
 
 extern "C" int printf(const char *format, ...);
@@ -116,7 +116,8 @@ int F(int x) {
 int F2(int x) {
   return F(x) + 2;
 }
-```
+{% endhighlight %}
+
 
 - In this particular example, it can be observed that recompiling the file1.cpp after changing  50 to 51, will produce the exact same machine code, except for the function 'F' and 'F2'. Hence 'F' and 'F2' are the minimal and sufficient set of functions which needs to be recompiled, and hot patching the new definition of 'F' and 'F2' will make the live C++ process behave equivalent to how it would behave if we could have rebuild the main executable again and restart the process.
 
