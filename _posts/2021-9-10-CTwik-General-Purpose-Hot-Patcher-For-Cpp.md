@@ -186,53 +186,65 @@ What happens when, there is a.hpp file, containing `int F(int x);` declaration, 
 
 ### As per the algorithm above:
 
-1.  what happens when a new member is added in a class S:
+1. what happens when a new member is added in a class S:
 
 - All the functions referring to that class S, across all translation units needs to be extracted out in `minimal_change.cpp` file. All the global variables referring to S needs to be recompiled. This include global variables of type S, as well as those using S in initialisation value.
 
-
 2. what happens when signature of a function is changed:
+
 - All the functions referring to the changed function name, across all TUs needs to be extracted out and recompiled.
 
 3. what happens when a new overloading is added for an existing function name "F".
+
 - Even then all the existing usage of "F" needs to be compiled. This is because CTwik creates dependency based on name of entity. Hence all the entities with name "F" (all overloading of "F") are the dependency entity for the functions where name "F" is being used.
 
 4. What if "F" is redefined with different meaning in different namespace 'a'.
+
 - CTwik use fully qualified entity names. Hence "F" and "a::F" are two different entity names, so they won't interfere with each other.
 
 5. what happens when signature of class member function is changed:
+
 - Currently the entire class declaration is considered single entity, hence all entities across all TUs, referring to that class needs to be recompiled.
 - This is actually unnecessarily recompilation, because since the layout of class is not changed, the entities which don't use that specific member functions (changed one), are not required to be recompiled.
 - In future, CTwik-client will create 1+N entities for a class or struct. 1 for class layout, and N for each of the member functions.
 
 6. What happens when definition of class member function is changed.
+
 - Very same thing, that happens for independent functions. Class member functions are also independent functions, with 1 extra parameter for implicitly capturing the class/struct object.
 
 7. Why does CTwik patch only functions and global data. What about other C++ entities ?
+
 - For the purpose of assembly code, there are only 2 kind of entities, functions and global data. Rest other C++ entities are for helping some functions to compile or to produce functions themselves. For example, template, lambdas etc.
 
 8. What happens with static member function of a class  
+
 - Static member function of a class are just class-namespace'd global functions.
 
 9. What happens when the initial value of a global variable is changed
+
 - As per the minimal entity extraction algorithms, the global variable will be extracted out in `minimal_change.cpp`, and while hot patching, Global offset table for that data symbol will be changed, to point to new memory address in shared library. Hence all the functions in main executable referring to that global variable, will be referring to new variable.
 - This data object will be initialized (constructor will run on it), before `dlopen` returns. Hence this new object will be valid to be used by all the old functions which were using it.
 - The old state of this variable will be lost, since it's constructed again.
 
 10. What happens when layout of class of a global variable is changed.
+
 - Adding/deleting/editing data members in a class can change it's layout. This will trigger the global variable definition to extract out in `minimal_change.cpp`. Also, all the functions across all TUs, where this global variable is being used, will be recompiled because they are in the inverse dependency cover of variable declaration entity.
 - The data object will be initilized (constructor will run on it), before `dlopen` returns. All the references of this variable are within the `minimal_change.so`, there is no need of changing the GOT entry of this symbol in main executable, but still CTwik change the GOT old entry to remain safe side.
 
 11. What happens when data-type of a global variable is change from A to B.
+
 - Very similar effect as changing layout of type A.
 
 12. What happens when a global variable or a functions is deleted
+
 - Deletion has no effect, apart from triggering the recompilation of entities, which were previously dependent on deleted entities. If those dependent entities are not fixed (changed) to not use deleted symbol anymore, CTwik-client will fail at compilation step ('Error: usage of unknown variable/function').
 
 13. What happens when global variable is renamed.
+
 - This is equivalent of deleting the old one and adding a new one.
 
 14. What happens when layout of a variable's class is changed, which is used as static local in some function F.
+
 - This will trigger function F to recompile. The compile "F" is a new function now in shared library. After hot patching, old "F" will be redirected to new "F". Note that if static local variable might be already constructed when old "F" was called first time. That old instance of static local variable is lost now. When new "F" is called for the first time, a new instance of static local variable will be constructed again.
 
 
