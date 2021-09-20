@@ -563,7 +563,3 @@ TEST(RuntimeInjector, Basic) {
 
 {% endhighlight %}
 
-
-
-ToDo: Add more content here from https://mohit-saini-blog.blogspot.com/2021/09/ctwik-general-purpose-hot-patcher-for-cpp.html
-
