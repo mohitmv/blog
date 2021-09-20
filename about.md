@@ -4,14 +4,12 @@ title: About
 permalink: /about/
 ---
 
-### About Me
-
-Hi, I'm Mohit Saini. I've worked on Embedded Systems, OS kernels, thread
+Hi, I'm Mohit Saini. I have worked on Embedded Systems, OS kernels, thread
 scheduling algorithms, micro controller with RISC-V architecture, Performance optimization at the level of nano seconds, C compiler for custom hardware targets, Build performance optimization.
 
-I've been writing C++ code for 8+ years now. More than writing, I'm obsessed
-with deleting code. In my life, I have deleted 2x amount of C++ code
-than what I have written overall.
+I've been writing C++ code for 8+ years now. More than writing, I'm like
+ deleting code. Overall I have deleted 2x amount of C++ code
+than what I have written in my life.
 
 #### I do a lot of open source. Some of my best open source work are:
 
@@ -22,7 +20,7 @@ than what I have written overall.
 4. [lazy_map](https://github.com/mohitmv/lazy_map) - std::unordered_map like interface but O(1) cost of copying
 
 
-#### Contact me
+#### Contact
 
 [LinkedIn](https://www.linkedin.com/in/mohit-saini-v2/)
 
