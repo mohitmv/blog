@@ -418,6 +418,69 @@ int F(int x) {
 
 ![Multiple Patches]({{site.baseurl}}/images/ctwik/multiple_patches.png "Multiple Patches")
 
+### Safety consideration in Hot Patching
+
+- Thread Safety
+  - CTwik-Server requires that, while it's hot patching a set of functions, none of those functions should be in call stack of any of the thread. The behaviour of CTwik-Server is undefined if this precondition is not met.
+  - Hence, hot patching needs to be done with write-mode in a read-write mutex at the top level user API handler.  i.e. while CTwik is hot patching, all new user APIs should be blocked on a mutex until hot patching is finished. Also, while some user APIs are still being served, CTwik hot patcher should wait for them to finish (acquiring read-write-lock in 'write' mode).
+  - Don't use CTwik for code change in 'main' function or other top level functions, above the read-write mutex.
+- We need to ensure that machine code of every function has at least 12 bytes. This is because we need to overwrite first 12 bytes, and if the function body ends before 12 bytes, we might end up corrupting the machine code of next function.
+  - Currently, GNU linker add the padding in functions to ensure the length of it's machine code definition is multiple of 16. This is done by adding unreachable "nop" instructions. As a result, even for function like void F() { }, the machine code takes at least 16 bytes.
+- The main executable must be linked with '-rdynamic' linker flag. This allows dlopen to succeed, when a shared library need weak symbols from the main executable.
+- The main executable must be linked with '-Wl,--whole-archive' linker flag, so that linker doesn't omit some of the unused symbol definitions. This is useful when some of the functions in shared library might depend on those omitted symbols.
+- The hot-patch requests are served sequentially.
+
+
+### Optimizations
+
+- Dealing with function symbol c-string can impact performance. Hence we deal with 64 bit checksum of function symbol c-string. The CTwik-client sends the 64 bit checksum of symbols to hot patch, along with their relative function pointer.
+  - The map from symbol -> list of function ptr, also use the 64 bit checksum (int64_t) for symbol.
+  - Note that we don't need to construct the symbol string again, hence just maintaining the checksum is sufficient.
+  - CTwik use google's city hash algorithm for computing check of symbol c-string.
+  - Note that CTwik-client still need to send symbol string for one symbol, so that "dlsym" can be used on it for figuring out the absolute function pointer and the offset.
+
+### The Core Hot Patcher
+
+
+{% highlight c++ %}
+bool RuntimeInjector::Inject(const InjectRequest& inject_request) {
+  CHECK(init_done);
+  static int filename_counter = 0;
+  string shared_lib_name = "/tmp/ctwik_requested_lib_" +
+                          std::to_string(filename_counter++) + ".so";
+  quick::WriteFile(shared_lib_name, inject_request.shared_lib_content());
+  auto patch = dlopen(shared_lib_name.c_str(), RTLD_NOW | RTLD_GLOBAL);
+  if (not patch) {
+    std::cout << "Failed to dlopen the patch: " << dlerror() << std::endl;
+    return false;
+  }
+  if (inject_request.symbols_size() == 0) return true;
+  long fn_ptr_offset = 0;
+  {
+    auto& s0 = inject_request.symbols(0);
+    CHECK(s0.relative_function_ptr() != 0);
+    CHECK(not inject_request.first_symbol_str().empty());
+    void* func = dlsym(patch, inject_request.first_symbol_str().c_str());
+    CHECK(func != nullptr);
+    fn_ptr_offset = bit_cast<long>(func) - s0.relative_function_ptr();
+  }
+  patches.emplace_back(patch);
+  for (auto& p : inject_request.symbols()) {
+    long fn_ptr = p.relative_function_ptr() + fn_ptr_offset;
+    auto& sym = symbol_fn_ptrs[p.symbol_hash()];
+    for (auto& old_fp : sym) {
+      printf("Setting Redirect from old_fp (0x%lx) to p_ptr (0x%lx)\n",
+               old_fp, fn_ptr);
+      std::cout << std::endl;
+      SetRedirect(old_fp, fn_ptr);
+    }
+    sym.push_back(fn_ptr);
+  }
+  return true;
+}
+{% endhighlight %}
+
+
 
 
 
