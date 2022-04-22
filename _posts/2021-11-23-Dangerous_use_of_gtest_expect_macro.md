@@ -10,7 +10,7 @@ The difference between EXPECT and ASSERT macros is that when ASSERT fails, the t
 
 Hence there is great incentive in using EXPECT as much as we can.
 
-*However using EXPECT macro at wrong places, can land us in serious troubles.* It expose the possibility/vulnerability of something *being broken* and still *tests passing*.
+**However using EXPECT macro at wrong places, can land us in serious troubles.** It expose the possibility/vulnerability of something **being broken** and still **tests passing**.
 
 ### Consider this simple program and it's unit test:
 
