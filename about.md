@@ -5,9 +5,9 @@ permalink: /about/
 ---
 
 Hi, I'm Mohit Saini. I have worked on Embedded Systems, OS kernels, thread
-scheduling algorithms, micro controller with RISC-V architecture, Performance optimization at the level of nano seconds, C compiler for custom hardware targets, Build performance optimization.
+scheduling algorithms in OS, micro controller with RISC-V architecture, Performance optimization at the level of nano seconds, C compiler for custom hardware targets, Build performance optimization.
 
-I've been writing C++ code for 8+ years now. More than writing, I'm like
+I've been writing C++ for 8+ years now. More than writing, I like
  deleting code. Overall I have deleted 2x amount of C++ code
 than what I have written in my life.
 
