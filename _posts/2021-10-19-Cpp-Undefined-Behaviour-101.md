@@ -13,18 +13,20 @@ For any programming language, there exists a definition of valid program. Given 
 Most of the programming languages requires that execution of every valid program should give correct result, and execution/compilation of every illegal program should fail.
 Note: here correct result is defined w.r.t intent of the program.
 For example, the Java program:
-```
+
+{% highlight c++ %}
 public static void main(String[] args) {
   1/0;
 }
-```
+{% endhighlight %}
+
 raise exception. and that was the intent. Hence the result (exception) is correct.
 
 and the following Java program is illegal. Hence compilation fails.
 
-```
+{% highlight c++ %}
 public public static void main() { }
-```
+{% endhighlight %}
 
 However C/C++ doesn't require that execution/compilation of every illegal program should fail. A program can be illegal and still it can work. Repeating it once more - **"A C++ program can be illegal and still work as you wished"**. That's what the danger is all about.
 
@@ -55,9 +57,9 @@ Humorously, Undefined behaviour is also called "nasal demons". Here is the conte
 > The term originally originated from a post by John F. Woods on 2/25/1992 in a discussion on the Usenet group comp.std.c[1]. Mr Woods was attempting to emphasis the fact that undefined behaviour may legally (as far as the standard is concerned) result in the compiler doing just about anything - including but not limited to "having demons fly out of your nose". The aim of the post was to make the point that one cannot put the compiler at fault for input which has no defined behaviour as far as the c standard is concerned.
 
 > References:
-- https://accu.org/journals/overload/21/115/maudel_1857/
-- https://en.wikichip.org/wiki/nasal_demons
-- https://en.wikipedia.org/wiki/Undefined_behavior
+- [https://accu.org/journals/overload/21/115/maudel_1857/](https://accu.org/journals/overload/21/115/maudel_1857/)
+- [https://en.wikichip.org/wiki/nasal_demons](https://en.wikichip.org/wiki/nasal_demons)
+- [https://en.wikipedia.org/wiki/Undefined_behavior](https://en.wikipedia.org/wiki/Undefined_behavior)
 
 
 So far we have seen the danger of UB. Now the next question is, why did C++ standard give such powerful liberty to compilers ?
@@ -66,23 +68,24 @@ The answer is, "Optimizations". C++ Compilers assumes a lot of things due to UB.
 
 Consider the example:
 
-```
+{% highlight c++ %}
 int* a = new int[10];
 a[20] = 4;
-```
+{% endhighlight %}
 
 This program is writing at illegal memory (UB). Consequence of this program cannot be even measured. This one illegal write can cause this program to delete entire disc. Imagine there were filepath chars written at `a[20]` address, to be used by some other function in this program. This `a[20] = 4` changes that filepath to something, matching with filepath of entire disc. So the other function that was supposed to delete only one file, will end up deleting entire disc.
 
 How java handles it:
 
 Java translate this code into something like:
-```
+
+{% highlight c++ %}
 if (20 < a.length) {
   a[20] = 4
 } else {
   throw new Exception("Out of Index");
 }
-```
+{% endhighlight %}
 
 Which is safe but require an extra `if` check. `C++` cannot afford an extra `if` for every memory read-write. So C++ simply declare illegal memory access a `UB`, so that compiler don't have to check validity of memory and still remain standard compliant.
 
@@ -96,7 +99,7 @@ This statement from C++ standard allows compiler to eliminate the code blocks th
 
 Short quiz : what would be the output of this program on sufficiently optimised compiler, for argc = 1 and 2 respectively ?
 
-```
+{% highlight c++ %}
 int main(int argc, char* argv[]) {
   int *a = nullptr;
   std::cout << "ABC " << argc << std::endl;
@@ -107,7 +110,8 @@ int main(int argc, char* argv[]) {
   std::cout << "GHI" << std::endl;
   return 0;
 }
-```
+{% endhighlight %}
+
 
 Correct Answer:
 For argc = 2, it would be `ABC 2` and `GHI` as expected.
@@ -139,7 +143,7 @@ i.e. they are saying compiler can assume that for every signed integers `a` and 
 
 Consider this program (by @eric.musser )
 
-```
+{% highlight c++ %}
 int main() {
     char buf[50] = "y";
     for (int j = 0; j < 9; ++j) {
@@ -148,7 +152,8 @@ int main() {
     }
 }
 
-```
+{% endhighlight %}
+
 https://godbolt.org/z/bzrbox
 
 It goes in infinite loop.
@@ -159,12 +164,12 @@ Because it involves undefined behaviour (signed integer overflow). There are two
 
 First one translates it to:
 
-```
+{% highlight c++ %}
   for (int p = 0; p < 9 * 0x20000001; p += 0x20000001) {
       std::cout << p << std::endl;
       if (buf[0] == 'x') break;
   }
-```
+{% endhighlight %}
 
 Second optimisation reduces `'j < 9 * 0x20000001'` to `true` because RHS is more than INT_MAX. and `j` being an integer cannot be more than INT_MAX.
 So that for loop now becomes
@@ -181,49 +186,49 @@ Short Quiz
 
 Q1. Does this program have UB ? Explain.
 
-```C++
+{% highlight c++ %}
 int x[10];
 int* a = x + 20;
-```
+{% endhighlight %}
 
 Q2. Does this program have UB ? Explain.
 
-```C++
+{% highlight c++ %}
 int main(int argc, char* argv[]) {
   if (argc > argc) {
     int x[10];
     int a = x[20];
   }
 }
-```
+{% endhighlight %}
 
 Q3. Does this program have UB ? Explain.
 
-```C++
+{% highlight c++ %}
 for (int i = 2; i > 1; i++) {
   std::cout << i << std::endl;
 }
-```
+{% endhighlight %}
 
 Q4. Does this program have UB ? Explain.
 
-```C++
+{% highlight c++ %}
 for (uint i = 2; i > 1; i++) {
   std::cout << i << std::endl;
 }
-```
+{% endhighlight %}
 
 Q5. Does this program have UB ? Explain. What would be output of this program ?
 
-```C++
+{% highlight c++ %}
 int x;
 x = x * 0;
 std::cout << x << std::endl;
-```
+{% endhighlight %}
 
 Q6. Does this program have UB ? Explain. Will assertion fail or no ?
 
-```C++
+{% highlight c++ %}
 int a = 4;
 
 void Thread1() {
@@ -235,32 +240,32 @@ void Thread2() {
   assert(b == 4 || b == 5);
 }
 
-```
+{% endhighlight %}
 
 #### Unspecified Behaviour
 
 Unspecified behaviour is different from undefined behaviour. Presence of reachable **'undefined behaviour'** makes the entire program illegal. However **'unspecified behaviour'** is not that serious. If value/state of an object is unspecified, it means the object is valid and it's value is one of the valid value from it's value-space, however there is no guarantee which one value.
 For example:
 
-```C++
+{% highlight c++ %}
 vector<int> v = {10, 20, 30};
 auto v2 = std::move(v);
 // At this point value of v is unspecified. However it's value is exactly one
 // of the possible value of vector<int>.
-```
+{% endhighlight %}
 
 #### Unspecified Evaluation Order
 
 Q7. What should be output of this program ?
 
-```C++
+{% highlight c++ %}
 int F() { std::cout << 'F'; return 10; }
 int G() { std::cout << 'G'; return 20; }
 int H() { std::cout << 'H'; return 20; }
 int main() {
   int x = F() + G() + H();
 }
-```
+{% endhighlight %}
 
 As per C++ standard order of evaluation of a function-call argument is unspecified. (Special rule for scalers args).
 
@@ -270,12 +275,12 @@ Short Quiz
 
 Q8. What would be output of this program, for stdin input '15 5 '.
 
-```C++
+{% highlight c++ %}
 int k;
 std::unordered_map<int, int> a;
 std::cin >> k >> a[k];
 std::cout << a[k];
-```
+{% endhighlight %}
 
 Q9. What would be output of program below ?
 
@@ -284,12 +289,13 @@ Q9. What would be output of program below ?
 - Option C). UB.
 - Option D). 0 if it is single threaded program else it could be garbage.
 
-```C++
-int* x = new int;
+{% highlight c++ %}
+int* x = new int();
 delete x;
 int y = *x;
 std::cout << y;
-```
+{% endhighlight %}
+
 
 Q10. What would be output of this program ?
 
@@ -298,12 +304,13 @@ Q10. What would be output of this program ?
 - Option C). UB.
 - Option D). 0 if it is single threaded program else it could be garbage.
 
-```C++
-int* x = new int;
+{% highlight c++ %}
+int* x = new int();
 int y = *x;
 delete x;
 std::cout << y;
-```
+{% endhighlight %}
+
 
 ## Appendix
 
@@ -356,5 +363,5 @@ One of the two unspecified possibility have undefined behaviour. Hence the progr
 
   - `auto x = int(); int y = x;` This is valid program, and the value of y will be 0. Here `x` is default-constructed and initialized with value 0.
 
-  - `int* x = new int; int y = *x;` For the same reason above, this is a valid program.
+  - `int* x = new int(); int y = *x;` For the same reason above, this is a valid program.
 
