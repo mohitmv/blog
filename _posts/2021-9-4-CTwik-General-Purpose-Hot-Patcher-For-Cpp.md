@@ -4,8 +4,7 @@ title: "CTwik : General Purpose Hot Patcher For C++"
 
 ---
 
-Hi, This is Mohit Saini. I built CTwik for general purpose hot patching in a
-C++ process.
+Introducing CTwik, a tool for general purpose hot patching in a C++ process.
 
 CTwik enables developers to hot patch their C++ code change, to a running C++ application, without even restarting the application.
 
