@@ -12,9 +12,10 @@ Hence there is great incentive in using EXPECT as much as we can.
 
 *However using EXPECT macro at wrong places, can land us in serious troubles.* It expose the possibility/vulnerability of something *being broken* and still *tests passing*.
 
-Consider this simple program and it's unit test:
+### Consider this simple program and it's unit test:
 
-```C++
+{% highlight c++ %}
+
 // a.h
 std::vector<int> FetchTwoValues(NetworkSocket& socket);
 
@@ -31,18 +32,25 @@ TEST(A, Basic) {
   EXPECT_TRUE(0 == values[0]);
   EXPECT_TRUE(0 == values[1]);
 }
-```
+
+{% endhighlight %}
+
 
 At the high level, this test appears correct.
 
 Recall the definition of gtest's EXPECT_ macro: ( Ignoring the debug-message-streaming and other stuff for simplicity)
 
-```C++
+{% highlight c++ %}
+
 #define EXPECT_TRUE(c) if (!(c)) { this->failed = true; }
 #define ASSERT_TRUE(c) if (!(c)) { this->failed = true; return; }
-```
 
-Now, let there is a bug in `FetchTwoValues` method and it returns an empty vector. 
+{% endhighlight %}
+
+
+### Let's there is a bug in `FetchTwoValues`
+
+Let there is a bug in `FetchTwoValues` method and it returns an empty vector.
 
 The `EXPECT_TRUE(values.size() >= 2)` will fail, and test will continue to next EXPECT_TRUE, which will be an illegal dereferencing (UB), and the test program might crash instead of failing, even before attempting all other test cases in this test file.
 but that crash is not a big problem because the crash will help us notice the problem and we can figure out. That is not the real problem.
@@ -51,7 +59,7 @@ The real problem is - the test might not crash. The real problem is, test can st
 
 The reason behind this unintuitive behaviour is UB. A program is not "defined to crash" on a UB. A program is defined to do anything of compiler's choice on UB. In fact this "might-not-crash" event might not happen all the time, all the places. It can happen nondeterministically and occasionally, leaving no room for us to debug.
 
-Let's understand how the test can succeed even when `FetchTwoValues` returns an empty vector:
+### How does it succeed when `FetchTwoValues` returns an empty vector
 
 
 First of all, the compiler don't know the definition of `FetchTwoValues` when compiling `a_test.cpp`. Secondly it notices a memory access `values[0]`, `values[1]` at the next step. At this step compiler's static analysis (compile time analysis) can deduce that `values.size() >= 2`, assuming that memory access is not illegal (UB o.w.), and (Note that compiler have access to the `std::vector`'s implementation in this translation unit).
@@ -74,3 +82,5 @@ To correct the test above, we should use `ASSERT_TRUE(values.size() >= 2)` inste
 
 Note that in case of ASSERT_TRUE, there is indeed an escape path (see `return;` in `ASSERT_TRUE`). Hence compiler cannot trim ASSERT_TRUE at compile time, because there exists a path that goes through ASSERT_TRUE and doesn't have UB in it.
 
+
+Learn in depth about [Undefined Behaviour](https://mohitmv.github.io/blog/Cpp-Undefined-Behaviour-101/) and their danger.
