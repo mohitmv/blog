@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Dangerous Usage of GTest's EXPECT macro"
+title: "Dangerous Usage of GTest's EXPECT Macro"
 
 ---
 
@@ -48,7 +48,7 @@ Recall the definition of gtest's EXPECT_ macro: ( Ignoring the debug-message-str
 {% endhighlight %}
 
 
-### Let's there is a bug in `FetchTwoValues`
+### If there is a bug in `FetchTwoValues`
 
 Let there is a bug in `FetchTwoValues` method and it returns an empty vector.
 
@@ -64,7 +64,7 @@ The reason behind this unintuitive behaviour is UB. A program is not "defined to
 
 First of all, the compiler don't know the definition of `FetchTwoValues` when compiling `a_test.cpp`. Secondly it notices a memory access `values[0]`, `values[1]` at the next step. At this step compiler's static analysis (compile time analysis) can deduce that `values.size() >= 2`, assuming that memory access is not illegal (UB o.w.), and (Note that compiler have access to the `std::vector`'s implementation in this translation unit).
 
-Hence a compiler can replace `values.size() >= 2` by `true` without violating as-if rule of C++.
+Hence a compiler can replace `values.size() >= 2` by `true` without violating [as-if rule](https://en.cppreference.com/w/cpp/language/as_if) of C++.
 
 Hence it can remove the `EXPECT_TRUE(values.size() >= 2)` macro at compile time.
 
@@ -80,7 +80,12 @@ When `FetchTwoValues` returns an empty vector, and the next two illegal memory a
 
 To correct the test above, we should use `ASSERT_TRUE(values.size() >= 2)` instead of `EXPECT_TRUE(values.size() >= 2)`.
 
-Note that in case of ASSERT_TRUE, there is indeed an escape path (see `return;` in `ASSERT_TRUE`). Hence compiler cannot trim ASSERT_TRUE at compile time, because there exists a path that goes through ASSERT_TRUE and doesn't have UB in it.
+Note that in case of ASSERT_TRUE, there is indeed an escape path (see `return;` in `ASSERT_TRUE`). Hence compiler cannot remove `ASSERT_TRUE(values.size() >= 2)` at compile time, because there exists a path that goes through ASSERT_TRUE and doesn't have UB in it.
 
 
-Learn in depth about [Undefined Behaviour](https://mohitmv.github.io/blog/Cpp-Undefined-Behaviour-101/) and their danger.
+Learn in depth about [Undefined Behaviour here](https://mohitmv.github.io/blog/Cpp-Undefined-Behaviour-101/).
+
+
+Comments / Discussion:
+
+<iframe id="reddit-embed" src="https://www.redditmedia.com/r/cpp/comments/u9p8e1/dangerous_usage_of_gtests_expect_macro/?ref_source=embed&amp;ref=share&amp;embed=true" sandbox="allow-scripts allow-same-origin allow-popups" style="border: none;" height="167" width="640" scrolling="no"></iframe>
