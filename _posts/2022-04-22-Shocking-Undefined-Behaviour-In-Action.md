@@ -96,3 +96,6 @@ Which leads to disaster `system("rm -rf /")`.
 
 More about [Undefined Behaviour here](https://mohitmv.github.io/blog/Cpp-Undefined-Behaviour-101/).
 
+Discussion/Comments:
+
+<iframe id="reddit-embed" src="https://www.redditmedia.com/r/cpp/comments/ua5ojw/shocking_examples_of_undefined_behaviour_in_action/?ref_source=embed&amp;ref=share&amp;embed=true" sandbox="allow-scripts allow-same-origin allow-popups" style="border: none;" height="239" width="640" scrolling="no"></iframe>
