@@ -81,7 +81,7 @@ This program has UB (nullptr dereferencing).
 
 In this program, compiler can see that variable `Do` is static, hence it cannot be read/written by other function in different translation units. Since the scope of `Do` is limited to this TU, compiler can deduce at compile time that possible values of `Do` cannot be anything other than `{nullptr, EraseAll}`.
 
-Further compiler can guarantee that it cannot have `nullptr` value, because the program will have UB in that case. Hence it can safely assume that possible values of `Do` are only `{EraseAll}`. Since there is only possible value of `Do` during it's lifetime in a legal program, it's good optimization to initialize `Do` by `EraseAll` and never set it again, i.e. replace `NeverCalled` by a nop function - `void NeverCalled() { }`
+Further compiler can guarantee that it cannot have `nullptr` value, because the program will have UB in that case. Hence it can safely assume that possible values of `Do` are only `{EraseAll}`. Since there is only possible value of `Do` during its lifetime in a legal program, it's good optimization to initialize `Do` by `EraseAll` and never set it again, i.e. replace `NeverCalled` by a nop function - `void NeverCalled() { }`
 
 Hence 
 
