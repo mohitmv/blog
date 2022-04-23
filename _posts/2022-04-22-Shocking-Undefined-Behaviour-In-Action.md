@@ -4,7 +4,7 @@ title: "Shocking Examples of Undefined Behaviour"
 
 ---
 
-As we know that Undefined Behaviour (UB) is a dangerous thing in C++. Still it remains difficult to explain to those who have not seen it's horror practically.
+As we know that Undefined Behaviour (UB) is a dangerous thing in C++. Still it remains difficult to explain to those who have not seen its horror practically.
 
 Those individual claims UB is bad in theory, but not so bad practically as long as thing works in practice because compiler developers are not evil.
 
