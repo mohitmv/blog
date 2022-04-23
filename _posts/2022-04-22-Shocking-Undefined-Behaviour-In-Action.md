@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Shocking Examples of Undefined Behaviour In Action"
+title: "Shocking Examples of Undefined Behaviour"
 
 ---
 
