@@ -41,15 +41,15 @@ for (int p = 0; p < 9 * 0x20000001; p += 0x20000001) {
 
 {% endhighlight %}
 
-This optimisation is legal because compiler can safely assume that range of `int` is actually `-infinite` to `+infinite`. The range `{INT_MIN, INT_MAX}` is for C++ developers, not for compilers.
+This optimisation is legal because compiler can safely assume that signed integer overflow will never happen in a legal program.
 
-Second optimisation reduces 'j < 9 * 0x20000001' to true because RHS is more than INT_MAX. and j being an integer cannot be more than INT_MAX. This for-loop now becomes
+Second optimisation reduces `'p < 9 * 0x20000001'` to true because RHS is more than INT_MAX. and p being an integer cannot be more than INT_MAX. This for-loop now becomes
 
-`for (int j = 0; true; j+=...) {....}`
+`for (int p = 0; true; p+=...) {....}`
 
-and hence infinite loop.
+and hence unexpected infinite loop.
 
-### Example2 : EraseAll function being called
+### Example2 : EraseAll function was never called
 
 {% highlight c++ %}
 
@@ -83,9 +83,15 @@ In this program, compiler can see that variable `Do` is static, hence it cannot 
 
 Further compiler can guarantee that it cannot have `nullptr` value, because the program will have UB in that case. Hence it can safely assume that possible values of `Do` are only `{EraseAll}`. Since there is only possible value of `Do` during it's lifetime in a legal program, it's good optimization to initialize `Do` by `EraseAll` and never set it again, i.e. replace `NeverCalled` by a nop function - `void NeverCalled() { }`
 
-Hence `int main() { return Do(); }` is replaced by `int main() { return EraseAll(); }`
+Hence 
 
-Which leads to disaster - `system("rm -rf /")`.
+`int main() { return Do(); }`
+
+is replaced by
+
+`int main() { return EraseAll(); }`
+
+Which leads to disaster `system("rm -rf /")`.
 
 
 More about [Undefined Behaviour here](https://mohitmv.github.io/blog/Cpp-Undefined-Behaviour-101/).
