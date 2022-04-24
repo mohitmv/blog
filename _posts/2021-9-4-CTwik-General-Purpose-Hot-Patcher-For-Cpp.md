@@ -51,7 +51,7 @@ Hot Patching is hard in C++, because once the App starts, there is only machine 
 
 ### Why CTwik
 
-- CTwik is the first tool in the industry, to implement general purpose hot patching, which covers 99% of the typical code changes. The major change it doesn't cover, are the change in the 'main' function and other top level functions which are above user's API handlers. Those top level boilerplates are rarely changed over time.
+- CTwik is a novel invention to implement general purpose hot patching, which covers 99% of the typical code changes. The major change it doesn't cover, are the change in the 'main' function and other top level functions which are above user's API handlers. Those top level boilerplates are rarely changed over time.
 
 
 ### CTwik Implementation Summary
