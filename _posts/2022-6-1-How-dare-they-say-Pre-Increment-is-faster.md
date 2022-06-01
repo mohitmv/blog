@@ -98,3 +98,8 @@ See the assembly code and diff yourself:
 
 3). The diff in assembly code: [https://www.diffchecker.com/YXPlSDRZ](https://www.diffchecker.com/YXPlSDRZ)
 
+
+Comments:
+
+<iframe id="reddit-embed" src="https://www.redditmedia.com/r/cpp/comments/v2u0ld/how_dare_they_say_it_is_faster_than_it/?ref_source=embed&amp;ref=share&amp;embed=true" sandbox="allow-scripts allow-same-origin allow-popups" style="border: none;" height="127" width="640" scrolling="no"></iframe>
+
