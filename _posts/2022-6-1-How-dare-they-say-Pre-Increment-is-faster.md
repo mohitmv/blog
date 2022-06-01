@@ -4,11 +4,11 @@ title: "How dare they say ++it is faster than it++"
 
 ---
 
-This is **NOT true** for **100%** of the **STL containers** - including the commonly used ones - `std::vector`,    `std::unordered_map`,    `std::array`,   `std::list`,   `std::unordered_set`,   `std::map`,   `std::set`,   `std::queue` and **ALL** others.
+This is **NOT true** for the iterators of **100%** of the **STL containers** - including the commonly used ones - `std::vector`,    `std::unordered_map`,    `std::array`,   `std::list`,   `std::unordered_set`,   `std::map`,   `std::set`,   `std::queue` and **ALL** others.
 
 This is obviously **NOT true** for primitive types. No explanation required.
 
-This is **NOT true** for **99.99999999%** of the **non-STL templated containers (custom implemented)** ever written in the entire C++ world except those which were written for extremely specialized use case in which they couldn't ensure `TriviallyCopyable` requirnment for iterator... but hey, for those super specialized 0.00000001% use case, they are not likely to support `it++` anyway, so nothing to worry.
+This is **NOT true** for the iterators of **99.99999999%** of the **non-STL templated containers (custom implemented)** ever written in the entire C++ world except those which were written for extremely specialized use case in which they couldn't ensure [`TriviallyCopyable`](https://en.cppreference.com/w/cpp/named_req/TriviallyCopyable) requirnment for iterator... but hey, for those super specialized 0.00000001% use case, they are not likely to support `it++` anyway, so nothing to worry.
 
 
 ## Why this discussion on the first place
