@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "How dare they said ++it is faster than it++ for iterators"
+title: "How dare they say ++it is faster than it++"
 
 ---
 
-This is **NOT true** for **100%** of the **STL containers** - including the commonly used ones - `std::vector`, `std::unordered_map`, `std::array`, `std::list`, `std::unordered_set`, `std::map`, `std::set`, `std::queue` and **ALL** others.
+This is **NOT true** for **100%** of the **STL containers** - including the commonly used ones - `std::vector`,    `std::unordered_map`,    `std::array`,   `std::list`,   `std::unordered_set`,   `std::map`,   `std::set`,   `std::queue` and **ALL** others.
 
 This is obviously **NOT true** for primitive types. No explaination required.
 
@@ -31,7 +31,7 @@ Note:
 
 In this code:
 
-```
+{% highlight c++ %}
 struct R {
   ...;
 };
@@ -56,8 +56,8 @@ S& F2(S& s) {
 
 F1(s);
 F2(s);
+{% endhighlight %}
 
-```
 
 `F2(s)` is NOT faster than `F1(s)`.
 
@@ -67,7 +67,7 @@ F2(s);
 
 2). Pre Increment https://godbolt.org/z/nnqWjno7P
 
-```
+{% highlight c++ %}
 int F3(const std::list<int>& v) {
     int output = 0;
     for (auto it = v.begin(); it != v.end(); it++) {
@@ -83,7 +83,7 @@ int G3(const std::list<int>& v) {
     }
     return output;
 }
-```
+{% endhighlight %}
 
 Here is the diff in their assembly code. Absolutely No diff at all except their names "F3" and "G3".
 
