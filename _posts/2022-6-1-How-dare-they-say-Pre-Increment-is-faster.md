@@ -41,25 +41,25 @@ struct S {
   int y;
 };
 
-S F1(S& s) {
+S Func1(S& s) {
   S s1_copy = s;
   s.x++;
   s.y++;
   return s1_copy;
 }
 
-S& F2(S& s) {
+S& Func2(S& s) {
   s.x++;
   s.y++;
   return s;
 }
 
-F1(s);
-F2(s);
+Func1(s);
+Func2(s);
 {% endhighlight %}
 
 
-`F2(s)` is NOT faster than `F1(s)`.
+`Func2(s)` is NOT faster than `Func1(s)`.
 
 ## Let's look at the machine code:
 
@@ -96,5 +96,5 @@ See the assembly code and diff yourself:
 
 2). Pre Increment [https://godbolt.org/z/nnqWjno7P](https://godbolt.org/z/nnqWjno7P)
 
-3). The diff in assembly oce: [https://www.diffchecker.com/YXPlSDRZ](https://www.diffchecker.com/YXPlSDRZ)
+3). The diff in assembly code: [https://www.diffchecker.com/YXPlSDRZ](https://www.diffchecker.com/YXPlSDRZ)
 
