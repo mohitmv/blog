@@ -98,10 +98,28 @@ See the assembly code and diff yourself:
 
 3). The diff in assembly code: [https://www.diffchecker.com/YXPlSDRZ](https://www.diffchecker.com/YXPlSDRZ)
 
+## A bit more complex case
+
+Note: Passing non-TriviallyCopyable type to templated container won't make it's iterator non-TriviallyCopyable.
+
+See example below for `std::list<S>`, `std::set<S>`, `std::unordered_set<S>`,
+
+where `S = std::vector<int>;`  (Non trivially copiable type)
+
+
+1). Post Increment [https://godbolt.org/z/EGWoTqove](https://godbolt.org/z/EGWoTqove)
+
+2). Pre Increment [https://godbolt.org/z/jKhYPGWf7](https://godbolt.org/z/jKhYPGWf7)
+
+3). The diff in assembly code: [https://www.diffchecker.com/yaSmJLV2](https://www.diffchecker.com/yaSmJLV2)
+
+In this case also assembly code is same for `it++` and `++it`.
+
+
 
 ## Should we prefer `it++` over `++it` ?
 
-No. Not at all. This article doesn't advocate usage of `it++` over `++it`.
+This article does NOT advocate usage of `it++` over `++it`.
 
 I personally use `++it` all the time.
 
