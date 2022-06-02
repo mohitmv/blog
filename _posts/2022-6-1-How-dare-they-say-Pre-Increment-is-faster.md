@@ -25,7 +25,7 @@ It's NOT almost-zero. It's absolute ZERO.
 
 Note:
 
-1). Compiler can figure out if it's unused or not.
+1). Compilers can figure out if it's unused or not. It works in `O1`, `O2` and `O3` mode.
 
 2). `operator++` for templated iterator is inlined.
 
