@@ -125,8 +125,10 @@ I personally use `++it` all the time.
 
 This article only challenges the statement that `++it` is faster than `it++`.
 
+<!--
 
 ## Discussion:
 
 <iframe id="reddit-embed" src="https://www.redditmedia.com/r/cpp/comments/v2u0ld/how_dare_they_say_it_is_faster_than_it/?ref_source=embed&amp;ref=share&amp;embed=true" sandbox="allow-scripts allow-same-origin allow-popups" style="border: none;" height="127" width="640" scrolling="no"></iframe>
 
+-->
