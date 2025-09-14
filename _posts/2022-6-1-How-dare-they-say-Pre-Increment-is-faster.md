@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "How dare they say ++it is faster than it++"
+title: "How can they say ++it is faster than it++"
 
 ---
 
