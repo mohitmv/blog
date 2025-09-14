@@ -6,6 +6,8 @@ title: "CTwik : General Purpose Hot Patcher For C++"
 
 Introducing CTwik, a tool for general purpose hot patching in a C++ process.
 
+[Link to Poster](https://drive.google.com/file/d/1ueTYaF2DSAbEShPMWyQEQ7t04DJWvJWi/view)
+
 CTwik enables developers to hot patch their C++ code change, to a running C++ application, without even restarting the application.
 
 CTwik-client comes with a directory watcher, which automatically keeps on figuring out the code change anywhere in repo, compute diff, and figure out the minimal set of functions which needs to be recompiled for patching.
